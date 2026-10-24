@@ -9,6 +9,11 @@ const { handler } = await import('./dist/server/entry.mjs')
 const port = Number(process.env.PORT ?? 4321)
 const host = process.env.HOST ?? 'localhost'
 
+/** A Location starting with two slashes or a backslash is read by browsers as another host. */
+function onSite(location) {
+  return typeof location === 'string' ? location.replace(/^[/\\]{2,}/, '/') : location
+}
+
 createServer((req, res) => {
   const url = req.url ?? '/'
 
@@ -18,6 +23,18 @@ createServer((req, res) => {
     res.writeHead(301, { location: collapsed })
     res.end()
     return
+  }
+
+  // Whatever the adapter answers, a redirect never leaves the site.
+  const setHeader = res.setHeader.bind(res)
+  res.setHeader = (name, value) => setHeader(name, name.toLowerCase() === 'location' ? onSite(value) : value)
+  const writeHead = res.writeHead.bind(res)
+  res.writeHead = (status, ...rest) => {
+    const headers = rest.find(arg => arg && typeof arg === 'object')
+    for (const name of Object.keys(headers ?? {})) {
+      if (name.toLowerCase() === 'location') headers[name] = onSite(headers[name])
+    }
+    return writeHead(status, ...rest)
   }
 
   if (url === '/rss.xml' || url.startsWith('/rss.xml?')) {
