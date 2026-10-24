@@ -1,9 +1,8 @@
 ---
-import { prepareHtml, toPost, type PostPage } from '@tamable/blog-kit'
 import ErrorCard from '../../components/ErrorCard.astro'
 import PostArticle from '../../components/PostArticle.astro'
 import Layout from '../../layouts/Layout.astro'
-import { tamable } from '../../lib/content'
+import { content } from '../../lib/content'
 
 // Drafts are read from Tamable on each request, never cached and never indexed.
 export const prerender = false
@@ -21,16 +20,8 @@ const token = (() => {
     return ''
   }
 })()
-const draft = token ? await tamable.preview(token) : null
-
-let post: PostPage | null = null
-if (draft) {
-  const mapped = toPost(draft)
-  post = { ...mapped, html: prepareHtml(mapped.html), seriesNav: null }
-}
-else {
-  Astro.response.status = 404
-}
+const post = token ? await content.previewPage(token) : null
+if (!post) Astro.response.status = 404
 ---
 
 {post
