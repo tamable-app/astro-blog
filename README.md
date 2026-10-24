@@ -82,7 +82,7 @@ You can point Tamable's deploy webhook straight at your host's build hook instea
 Redirects are worked out once, when the site builds, so the live server never asks Tamable about them:
 
 - `integrations/tamable.ts` reads Tamable's posts and renamed posts, turns them into a list of 301s with the kit's `buildRedirects` and hands it to Astro's `redirects` option. With `ghostRedirects: true` in `site.config.ts`, the list also covers an old Ghost blog's post, tag and feed addresses. The same step stops the build when there are no published posts.
-- Every page has one address, without a trailing slash. Prerendered pages are files the Node server serves itself, and with `trailingSlash: 'never'` it answers `/blog/` with a 301 to `/blog`. Every other request goes through `src/fetch.ts` first, which removes the slash before Astro routes it (going straight to a renamed post's new address, in one hop) and, when moving from Ghost, sends old tag and author pages to `/blog` and `/about`.
+- Every page has one address, without a trailing slash. `server.mjs` first collapses leading slashes (`//blog/` becomes `/blog/`). Prerendered pages are files the Node server serves itself, and with `trailingSlash: 'never'` it answers `/blog/` with a 301 to `/blog`. Every other request goes through `src/fetch.ts` first, which removes the slash before Astro routes it (going straight to a renamed post's new address, in one hop) and, when moving from Ghost, sends old tag and author pages to `/blog` and `/about`.
 - Previews are left alone, since a preview token can end in a slash.
 
 ## Make it yours
@@ -95,12 +95,14 @@ Redirects are worked out once, when the site builds, so the live server never as
 
 ## Deploying
 
-Any host that runs Node works: build with `npm run build`, then start `dist/server/entry.mjs` (or `npm start`). `HOST` and `PORT` choose where it listens.
+Any host that runs Node works: build with `npm run build`, then start `server.mjs` (or `npm start`). `HOST` and `PORT` choose where it listens.
+
+`server.mjs` is a few lines of `node:http` in front of the Astro Node adapter, which still serves the prerendered files and the on-demand routes. It answers an address that starts with several slashes, like `//blog/`, with a 301 to the same path with one, so a trailing-slash redirect can never point at another host, and it serves the feed as `application/rss+xml`.
 
 On Laravel Forge with PM2, give Node the absolute path to the environment file. PM2 in cluster mode starts Node from its own working directory, so a relative `--env-file=.env` can stop working after the site's folder changes:
 
 ```json
-{ "name": "blog", "cwd": "/home/forge/yourblog.com/current", "script": "./dist/server/entry.mjs", "node_args": "--env-file=/home/forge/yourblog.com/.env", "instances": 2, "exec_mode": "cluster" }
+{ "name": "blog", "cwd": "/home/forge/yourblog.com/current", "script": "./server.mjs", "node_args": "--env-file=/home/forge/yourblog.com/.env", "instances": 2, "exec_mode": "cluster" }
 ```
 
 A static host can serve `dist/client` on its own, but the two on-demand routes, `/preview/[...token]` and `/api/deploy`, need a server. Either swap `@astrojs/node` for your host's adapter (Netlify, Vercel and Cloudflare run them as functions), or delete those two files and point Tamable's deploy webhook straight at the host's build hook. Redirects and trailing slashes then follow your host's rules.
@@ -114,7 +116,7 @@ A static host can serve `dist/client` on its own, but the two on-demand routes, 
 | `npm run typecheck` | `astro check` |
 | `npm test` | Vitest |
 | `npm run build` | Prerenders the site into `dist` |
-| `npm start` | Serves `dist` (preview and webhook routes included) |
+| `npm start` | Serves `dist` through `server.mjs` (preview and webhook routes included) |
 | `npm run fake-tamable` | The fake Tamable on port 4010, read key `fixture` |
 
 CI runs lint, type check and tests, then builds against the fake Tamable, so it never needs a read key.
