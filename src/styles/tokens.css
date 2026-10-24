@@ -1,0 +1,88 @@
+/* Every color, font and size the site uses. Restyle the blog by changing these.
+   Light is the default; dark follows the system unless the visitor picked one. */
+:root,
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #f8f9fb;
+  --surface-2: #f1f3f6;
+  --border: #e5e7eb;
+  --border-strong: #d1d5db;
+  --heading: #111827;
+  --text: #111827;
+  --text-body: #374151;
+  --text-soft: #4b5563;
+  --muted: #6b7280;
+  --link: #2563eb;
+  --link-hover: #1d4ed8;
+  --accent-fill: #2563eb;
+  --on-accent: #ffffff;
+  --accent-soft: #eff6ff;
+  --accent-border: #bfdbfe;
+  --mark-bg: #fef3c7;
+  --mark-text: #111827;
+  --code-bg: #0f172a;
+  --code-text: #e5e7eb;
+  --inline-code: #1f2937;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0b0c0e;
+    --surface: #141619;
+    --surface-2: #1b1e22;
+    --border: #26292e;
+    --border-strong: #34383e;
+    --heading: #f9fafb;
+    --text: #f3f4f6;
+    --text-body: #d1d5db;
+    --text-soft: #c4c8cf;
+    --muted: #9ca3af;
+    --link: #7aa7ff;
+    --link-hover: #a5c3ff;
+    --accent-fill: #7aa7ff;
+    --on-accent: #0b0c0e;
+    --accent-soft: #111a2b;
+    --accent-border: #2b3f66;
+    --mark-bg: #3a3115;
+    --mark-text: #fde68a;
+    --code-bg: #050607;
+    --code-text: #e5e7eb;
+    --inline-code: #e5e7eb;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b0c0e;
+  --surface: #141619;
+  --surface-2: #1b1e22;
+  --border: #26292e;
+  --border-strong: #34383e;
+  --heading: #f9fafb;
+  --text: #f3f4f6;
+  --text-body: #d1d5db;
+  --text-soft: #c4c8cf;
+  --muted: #9ca3af;
+  --link: #7aa7ff;
+  --link-hover: #a5c3ff;
+  --accent-fill: #7aa7ff;
+  --on-accent: #0b0c0e;
+  --accent-soft: #111a2b;
+  --accent-border: #2b3f66;
+  --mark-bg: #3a3115;
+  --mark-text: #fde68a;
+  --code-bg: #050607;
+  --code-text: #e5e7eb;
+  --inline-code: #e5e7eb;
+}
+
+:root {
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  --radius: 10px;
+  --page: 880px;
+  --reading: 720px;
+  --gutter: 24px;
+}
