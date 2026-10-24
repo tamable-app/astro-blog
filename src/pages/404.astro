@@ -1,0 +1,8 @@
+---
+import ErrorCard from '../components/ErrorCard.astro'
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title="Not found" robots="noindex" canonical={null}>
+  <ErrorCard eyebrow="Error 404" title="This page doesn't exist" text="It may have moved, or the link has a typo." />
+</Layout>

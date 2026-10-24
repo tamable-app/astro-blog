@@ -1,0 +1,92 @@
+---
+import { isoDay, type PostPage } from '@tamable/blog-kit'
+import SeriesNav from './SeriesNav.astro'
+
+interface Props {
+  post: PostPage
+  preview?: boolean
+}
+
+const { post, preview = false } = Astro.props
+---
+
+<article class="post container-reading">
+  <p class="meta">
+    {post.publishedAt
+      ? <time datetime={post.publishedAt}>{isoDay(post.publishedAt)}</time>
+      : preview && <span>Not published yet</span>}
+    <span> · {post.readingMinutes} min</span>
+    {post.tags.map(tag => <Fragment><span> · </span><a href={`/tags/${tag.slug}`}>{tag.name}</a></Fragment>)}
+  </p>
+  <h1 class="title">{post.title}</h1>
+  {post.excerpt && <p class="lead">{post.excerpt}</p>}
+  {post.cover && (
+    <figure class="cover">
+      <img src={post.cover.url} alt={post.cover.alt} width={post.cover.width ?? undefined} height={post.cover.height ?? undefined} fetchpriority="high">
+    </figure>
+  )}
+  {/* Tamable's HTML goes through its own schema and is served as published. */}
+  <div class="prose" set:html={post.html} />
+  {post.seriesNav && <SeriesNav nav={post.seriesNav} />}
+</article>
+
+<script>
+  // X's script turns the fallback blockquotes into embeds; it only loads on posts that have one.
+  const quotes = document.querySelectorAll<HTMLElement>('.prose blockquote.twitter-tweet')
+  if (quotes.length) {
+    const root = document.documentElement
+    const light = root.dataset.theme === 'light' || (!root.dataset.theme && window.matchMedia('(prefers-color-scheme: light)').matches)
+    quotes.forEach((quote) => {
+      quote.dataset.theme = light ? 'light' : 'dark'
+      quote.dataset.dnt = 'true'
+    })
+    const script = document.createElement('script')
+    script.src = 'https://platform.twitter.com/widgets.js'
+    script.async = true
+    document.body.appendChild(script)
+  }
+</script>
+
+<style>
+  .post {
+    padding-block: 80px 96px;
+  }
+
+  .meta {
+    margin: 0 0 20px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+
+  .meta a {
+    text-decoration: none;
+  }
+
+  .title {
+    margin: 0 0 20px;
+    font-size: clamp(34px, 6vw, 46px);
+    line-height: 1.1;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--text);
+  }
+
+  .lead {
+    margin: 0 0 56px;
+    font-size: 21px;
+    line-height: 1.55;
+    color: var(--text-soft);
+  }
+
+  .cover {
+    margin: 0 0 48px;
+  }
+
+  .cover img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+</style>

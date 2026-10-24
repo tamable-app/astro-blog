@@ -1,0 +1,284 @@
+/* Tamable's post HTML, styled as it comes (docs/read-api.md in Tamable lists every element). */
+.prose {
+  font-size: 19px;
+  line-height: 1.75;
+  color: var(--text-body);
+  overflow-wrap: break-word;
+}
+
+.prose > * {
+  margin-block: 0 24px;
+}
+
+.prose > :last-child {
+  margin-bottom: 0;
+}
+
+.prose h1,
+.prose h2,
+.prose h3,
+.prose h4,
+.prose h5,
+.prose h6 {
+  position: relative;
+  margin: 56px 0 20px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--heading);
+  scroll-margin-top: 24px;
+}
+
+.prose h1,
+.prose h2 {
+  font-size: 28px;
+}
+
+.prose h3 {
+  font-size: 23px;
+}
+
+.prose h4,
+.prose h5,
+.prose h6 {
+  font-size: 19px;
+}
+
+.prose .heading-anchor {
+  margin-right: 10px;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.prose .heading-anchor:hover {
+  color: var(--link);
+}
+
+.prose strong {
+  color: var(--heading);
+  font-weight: 600;
+}
+
+.prose mark {
+  padding: 0 3px;
+  border-radius: 3px;
+  background: var(--mark-bg);
+  color: var(--mark-text);
+}
+
+.prose code {
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--surface-2);
+  color: var(--inline-code);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+.prose pre {
+  margin-bottom: 40px;
+  padding: 18px 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--code-bg);
+  color: var(--code-text);
+  font-size: 15px;
+  line-height: 1.65;
+  overflow-x: auto;
+}
+
+.prose pre code {
+  padding: 0;
+  background: none;
+  color: inherit;
+  font-size: inherit;
+}
+
+.prose ul,
+.prose ol {
+  padding-left: 1.4em;
+}
+
+.prose li > p {
+  margin: 0 0 8px;
+}
+
+.prose li::marker {
+  color: var(--link);
+}
+
+.prose hr {
+  margin-block: 48px;
+  border: 0;
+  border-top: 1px dashed var(--border-strong);
+}
+
+.prose blockquote:not(.twitter-tweet) {
+  margin-inline: 0;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+}
+
+.prose blockquote:not(.twitter-tweet) > :last-child {
+  margin-bottom: 0;
+}
+
+.prose blockquote:not(.twitter-tweet) p {
+  margin: 0 0 10px;
+}
+
+.prose figure {
+  margin: 0 0 40px;
+}
+
+.prose figure img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.prose figcaption {
+  margin-top: 12px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.prose figure.video iframe,
+.prose figure.video video {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: #000000;
+}
+
+/* An X post before X's widget script swaps it for the embed, or when it can't load. */
+.prose blockquote.twitter-tweet {
+  margin: 0 0 40px;
+  padding: 20px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  font-size: 14px;
+}
+
+.prose .twitter-tweet a {
+  overflow-wrap: anywhere;
+}
+
+/* Tamable serves the card as <a> holding an optional <img>, the title and an optional description. */
+.prose a.link-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto 1fr;
+  margin-bottom: 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  line-height: 1.5;
+}
+
+.prose a.link-card:hover {
+  border-color: var(--border-strong);
+}
+
+.prose .link-card img {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 168px;
+  height: 100%;
+  min-height: 100px;
+  object-fit: cover;
+  background: var(--surface-2);
+}
+
+.prose .link-card-title,
+.prose .link-card-description {
+  grid-column: 1;
+  display: block;
+  padding-inline: 20px;
+}
+
+.prose .link-card-title {
+  padding-top: 18px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.prose .link-card-description {
+  padding-bottom: 18px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.prose .link-card-title:last-child {
+  padding-bottom: 18px;
+}
+
+.prose .table-wrap {
+  margin-bottom: 40px;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.prose th,
+.prose td {
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose tr:last-child > td {
+  border-bottom: 0;
+}
+
+.prose th {
+  background: var(--surface);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.prose th > p,
+.prose td > p {
+  margin: 0;
+}
+
+@media (max-width: 560px) {
+  .prose {
+    font-size: 18px;
+  }
+
+  .prose a.link-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+  }
+
+  .prose .link-card img {
+    grid-column: 1;
+    grid-row: 1;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1.91 / 1;
+  }
+}

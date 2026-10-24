@@ -1,0 +1,45 @@
+---
+import type { GetStaticPaths } from 'astro'
+import PostList from '../../components/PostList.astro'
+import TagFilter from '../../components/TagFilter.astro'
+import Layout from '../../layouts/Layout.astro'
+import { content, tagCounts } from '../../lib/content'
+
+export const getStaticPaths = (async () => {
+  return tagCounts(await content.postSummaries()).map(tag => ({ params: { tag: tag.slug } }))
+}) satisfies GetStaticPaths
+
+const slug = Astro.params.tag
+const posts = await content.postSummaries()
+const tags = tagCounts(posts)
+const tag = tags.find(t => t.slug === slug)
+if (!tag) return Astro.rewrite('/404')
+
+const tagged = posts.filter(post => post.tags.some(t => t.slug === slug))
+---
+
+<Layout title={tag.name} description={`Posts tagged ${tag.name}.`}>
+  <div class="container listing">
+    <p class="eyebrow">Tag</p>
+    <h1 class="page-title">{tag.name}</h1>
+    <p class="count">{tagged.length} {tagged.length === 1 ? 'post' : 'posts'} tagged {tag.name}.</p>
+    <TagFilter tags={tags} total={posts.length} current={slug} />
+    <PostList posts={tagged} byYear showTags />
+  </div>
+</Layout>
+
+<style>
+  .listing {
+    padding-block: 72px 96px;
+  }
+
+  .page-title {
+    margin-bottom: 12px;
+  }
+
+  .count {
+    margin: 0 0 28px;
+    font-size: 18px;
+    color: var(--text-soft);
+  }
+</style>

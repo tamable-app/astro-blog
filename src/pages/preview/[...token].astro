@@ -1,0 +1,37 @@
+---
+import ErrorCard from '../../components/ErrorCard.astro'
+import PostArticle from '../../components/PostArticle.astro'
+import Layout from '../../layouts/Layout.astro'
+import { content } from '../../lib/content'
+
+// Drafts are read from Tamable on each request, never cached and never indexed.
+export const prerender = false
+
+Astro.response.headers.set('cache-control', 'private, no-store')
+Astro.response.headers.set('x-robots-tag', 'noindex, nofollow')
+
+// Read from the raw path: a token can hold an encoded "/", which route params would split on.
+const raw = new URL(Astro.request.url).pathname.replace(/^\/preview\/?/, '')
+const token = (() => {
+  try {
+    return decodeURIComponent(raw)
+  }
+  catch {
+    return ''
+  }
+})()
+const post = token ? await content.previewPage(token) : null
+if (!post) Astro.response.status = 404
+---
+
+{post
+  ? (
+      <Layout title={`Preview: ${post.title}`} robots="noindex, nofollow" canonical={null} preview>
+        <PostArticle post={post} preview />
+      </Layout>
+    )
+  : (
+      <Layout title="Preview expired" robots="noindex" canonical={null}>
+        <ErrorCard eyebrow="Preview" title="This preview link has expired" text="Preview links last 24 hours. Open Preview in Tamable again for a fresh one." allPosts={false} />
+      </Layout>
+    )}

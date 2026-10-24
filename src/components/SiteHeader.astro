@@ -1,0 +1,82 @@
+---
+import site from '../../site.config'
+import ThemeToggle from './ThemeToggle.astro'
+
+const path = Astro.url.pathname
+
+const links = [
+  { label: 'Blog', to: '/blog', sections: ['/blog', '/tags'] },
+  { label: 'Series', to: '/series', sections: ['/series'] },
+  { label: 'About', to: '/about', sections: ['/about'] },
+]
+
+function isCurrent(sections: string[]) {
+  return sections.some(section => path === section || path.startsWith(`${section}/`))
+}
+---
+
+<header class="site-header container">
+  <a href="/" class="home">{site.name}</a>
+  <nav aria-label="Main" class="nav">
+    {links.map(link => (
+      <a
+        href={link.to}
+        class:list={['nav-link', { current: isCurrent(link.sections) }]}
+        aria-current={isCurrent(link.sections) ? 'page' : undefined}
+      >
+        {link.label}
+      </a>
+    ))}
+    <ThemeToggle />
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-block: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .home {
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
+    font-size: 14px;
+  }
+
+  .nav-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+    color: var(--text-soft);
+    text-decoration: none;
+  }
+
+  .nav-link:hover {
+    color: var(--text);
+  }
+
+  .nav-link.current {
+    color: var(--link);
+  }
+
+  @media (max-width: 480px) {
+    .nav-link {
+      padding: 0 7px;
+    }
+  }
+</style>

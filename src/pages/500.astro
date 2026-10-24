@@ -1,0 +1,8 @@
+---
+import ErrorCard from '../components/ErrorCard.astro'
+import Layout from '../layouts/Layout.astro'
+---
+
+<Layout title="Something went wrong" robots="noindex" canonical={null}>
+  <ErrorCard eyebrow="Error 500" title="Something went wrong" text="Try again in a moment." />
+</Layout>

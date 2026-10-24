@@ -1,0 +1,52 @@
+---
+import type { SeriesNav } from '@tamable/blog-kit'
+
+interface Props {
+  nav: SeriesNav
+}
+
+const { nav } = Astro.props
+---
+
+<nav aria-label="Series" class="series-nav">
+  <p class="where">
+    <a href={`/series/${nav.slug}`}>{nav.title}</a> · part {nav.number} · {nav.total} published
+  </p>
+  {(nav.previous || nav.next) && (
+    <p class="links">
+      {nav.previous ? <a href={nav.previous.path} rel="prev">← {nav.previous.title}</a> : <span />}
+      {nav.next && <a href={nav.next.path} rel="next" class="next">{nav.next.title} →</a>}
+    </p>
+  )}
+</nav>
+
+<style>
+  .series-nav {
+    margin-top: 56px;
+    padding: 20px 24px;
+    border: 1px solid var(--accent-border);
+    border-radius: var(--radius);
+    background: var(--accent-soft);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  .where {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-soft);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 8px 0 0;
+  }
+
+  .next {
+    margin-left: auto;
+    text-align: right;
+  }
+</style>

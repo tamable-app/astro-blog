@@ -1,0 +1,115 @@
+---
+import '@fontsource/inter/400.css'
+import '@fontsource/inter/400-italic.css'
+import '@fontsource/inter/500.css'
+import '@fontsource/inter/500-italic.css'
+import '@fontsource/inter/600.css'
+import '@fontsource/inter/600-italic.css'
+import '@fontsource/jetbrains-mono/400.css'
+import '@fontsource/jetbrains-mono/500.css'
+import '../styles/tokens.css'
+import '../styles/base.css'
+import '../styles/prose.css'
+import type { Cover } from '@tamable/blog-kit'
+import site from '../../site.config'
+import SiteFooter from '../components/SiteFooter.astro'
+import SiteHeader from '../components/SiteHeader.astro'
+import { siteUrl } from '../lib/site'
+
+interface Props {
+  title?: string
+  description?: string | null
+  /** The page's canonical address. Defaults to its own; null leaves it out, as on a preview. */
+  canonical?: string | null
+  robots?: string
+  image?: Cover | null
+  article?: { publishedTime: string | null, modifiedTime: string | null, tags: string[] }
+  jsonLd?: Record<string, unknown>
+  preview?: boolean
+}
+
+const { title, description, robots, image, article, jsonLd, preview = false } = Astro.props
+const path = Astro.url.pathname
+const pageUrl = `${siteUrl}${path === '/' ? '' : path}`
+const canonical = Astro.props.canonical === undefined ? pageUrl : Astro.props.canonical
+const fullTitle = title ? `${title} · ${site.name}` : site.name
+const handle = site.links.x ? `@${site.links.x}` : null
+---
+
+<!doctype html>
+<html lang={site.locale}>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {/* Applies a saved theme before first paint, so a light-theme visitor never sees a dark flash. */}
+    <script is:inline>try{const t=localStorage.getItem("theme");if(t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch{/* storage blocked */}</script>
+    <title>{fullTitle}</title>
+    {description && <meta name="description" content={description}>}
+    {robots && <meta name="robots" content={robots}>}
+    {canonical && <link rel="canonical" href={canonical}>}
+    <link rel="alternate" type="application/rss+xml" title={site.name} href={`${siteUrl}/rss.xml`}>
+    <meta property="og:site_name" content={site.name}>
+    <meta property="og:type" content={article ? 'article' : 'website'}>
+    <meta property="og:title" content={title ?? site.name}>
+    {description && <meta property="og:description" content={description}>}
+    {!preview && <meta property="og:url" content={canonical ?? pageUrl}>}
+    {image && <meta property="og:image" content={image.url}>}
+    {image && <meta property="og:image:alt" content={image.alt}>}
+    {image?.width && <meta property="og:image:width" content={String(image.width)}>}
+    {image?.height && <meta property="og:image:height" content={String(image.height)}>}
+    {article?.publishedTime && <meta property="article:published_time" content={article.publishedTime}>}
+    {article?.modifiedTime && <meta property="article:modified_time" content={article.modifiedTime}>}
+    {article?.tags.map(tag => <meta property="article:tag" content={tag}>)}
+    <meta name="twitter:card" content={image ? 'summary_large_image' : 'summary'}>
+    {handle && <meta name="twitter:site" content={handle}>}
+    {handle && <meta name="twitter:creator" content={handle}>}
+    {/* `<` escaped so text from a post can never close the script tag. */}
+    {jsonLd && <script is:inline type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')} />}
+  </head>
+  <body>
+    <div class="layout">
+      {preview
+        ? (
+            <div role="status" class="banner">
+              <div class="container inner">
+                <span>Preview: a draft, not published and not indexed</span>
+                <span>Edits in Tamable show on reload</span>
+              </div>
+            </div>
+          )
+        : <a href="#main" class="skip-link">Skip to content</a>}
+      <SiteHeader />
+      <main id="main" class="main">
+        <slot />
+      </main>
+      <SiteFooter />
+    </div>
+  </body>
+</html>
+
+<style>
+  .layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .main {
+    flex: 1;
+  }
+
+  .banner {
+    background: var(--accent-fill);
+    color: var(--on-accent);
+  }
+
+  .inner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    padding-block: 12px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+</style>

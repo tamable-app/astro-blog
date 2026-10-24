@@ -1,0 +1,87 @@
+---
+import site from '../../site.config'
+import Layout from '../layouts/Layout.astro'
+
+const { x, github, email } = site.links
+---
+
+<Layout title="About" description={`About ${site.author}.`}>
+  <div class="container about">
+    <div class="main">
+      <h1 class="page-title">About</h1>
+      <div class="prose">
+        <p class="lead">Hi, I'm {site.author}.</p>
+        <p>This page lives in <code>src/pages/about.astro</code>. Replace this text with your own.</p>
+      </div>
+    </div>
+
+    {(x || github || email) && (
+      <aside aria-label="Elsewhere" class="elsewhere">
+        <p class="label">Elsewhere</p>
+        <ul>
+          {x && <li><a href={`https://x.com/${x}`}>x.com/{x}</a></li>}
+          {github && <li><a href={`https://github.com/${github}`}>github.com/{github}</a></li>}
+          {email && <li><a href={`mailto:${email}`}>{email}</a></li>}
+          <li><a href="/rss.xml">RSS feed</a></li>
+        </ul>
+      </aside>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .about {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 48px 64px;
+    padding-block: 72px 96px;
+  }
+
+  .main {
+    flex: 999 1 480px;
+    min-width: 0;
+  }
+
+  .page-title {
+    margin-bottom: 32px;
+  }
+
+  .lead {
+    font-size: 22px;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .elsewhere {
+    flex: 1 1 220px;
+    align-self: flex-start;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    font-size: 14px;
+  }
+
+  .label {
+    margin: 0 0 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  li a {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    overflow-wrap: anywhere;
+    text-decoration: none;
+  }
+</style>

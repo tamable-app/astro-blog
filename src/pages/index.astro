@@ -1,0 +1,88 @@
+---
+import site from '../../site.config'
+import PostList from '../components/PostList.astro'
+import SeriesCard from '../components/SeriesCard.astro'
+import Layout from '../layouts/Layout.astro'
+import { content } from '../lib/content'
+
+const latest = (await content.postSummaries()).slice(0, 5)
+const series = await content.seriesSummaries()
+---
+
+<Layout description={site.description}>
+  <div class="container">
+    <section class="hero">
+      <h1 class="hello">{site.name}</h1>
+      <p class="intro">{site.description}</p>
+    </section>
+
+    <section aria-labelledby="latest" class="latest">
+      <h2 id="latest" class="section-title">Latest posts</h2>
+      <PostList posts={latest} />
+      <a href="/blog" class="all">All posts →</a>
+    </section>
+
+    {series.length > 0 && (
+      <section aria-labelledby="series" class="series">
+        <h2 id="series" class="section-title">Series</h2>
+        <div class="cards">
+          {series.map(item => <SeriesCard series={item} />)}
+        </div>
+      </section>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .hero {
+    padding-block: 96px 80px;
+  }
+
+  .hello {
+    margin: 0 0 24px;
+    font-size: clamp(40px, 8vw, 56px);
+    line-height: 1.05;
+    font-weight: 600;
+    letter-spacing: -0.03em;
+  }
+
+  .intro {
+    margin: 0;
+    max-width: 640px;
+    font-size: 22px;
+    line-height: 1.55;
+    color: var(--text-soft);
+  }
+
+  .latest {
+    padding-bottom: 96px;
+  }
+
+  .section-title {
+    margin: 0 0 8px;
+    font-size: 20px;
+    font-weight: 600;
+  }
+
+  .series {
+    padding-bottom: 96px;
+  }
+
+  .series .section-title {
+    margin-bottom: 20px;
+  }
+
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .all {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 16px;
+    font-size: 14px;
+  }
+</style>

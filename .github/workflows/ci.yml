@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Lint, type check, test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      - run: npm run lint
+
+      - run: npm run typecheck
+
+      - run: npm test
+
+      # CI never holds the read key: the build reads made-up posts from a fake Tamable.
+      - name: Build against the fake Tamable
+        run: |
+          npm run fake-tamable &
+          until curl -s -o /dev/null localhost:4010; do sleep 0.2; done
+          npm run build
+        env:
+          TAMABLE_API_URL: http://localhost:4010/api/v1
+          TAMABLE_READ_KEY: fixture
