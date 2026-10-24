@@ -1,0 +1,44 @@
+---
+import SeriesCard from '../../components/SeriesCard.astro'
+import Layout from '../../layouts/Layout.astro'
+import { content } from '../../lib/content'
+
+const series = await content.seriesSummaries()
+---
+
+<Layout title="Series" description="Posts that belong together, in order.">
+  <div class="container listing">
+    <h1 class="page-title">Series</h1>
+    <p class="intro">Posts that belong together, in order.</p>
+    {series.length
+      ? <div class="cards">{series.map(item => <SeriesCard series={item} />)}</div>
+      : <p class="empty">No series yet.</p>}
+  </div>
+</Layout>
+
+<style>
+  .listing {
+    padding-block: 72px 96px;
+  }
+
+  .page-title {
+    margin-bottom: 12px;
+  }
+
+  .intro {
+    margin: 0 0 40px;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--text-soft);
+  }
+
+  .cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .empty {
+    color: var(--muted);
+  }
+</style>

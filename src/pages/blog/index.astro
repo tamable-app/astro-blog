@@ -1,0 +1,26 @@
+---
+import PostList from '../../components/PostList.astro'
+import TagFilter from '../../components/TagFilter.astro'
+import Layout from '../../layouts/Layout.astro'
+import { content, tagCounts } from '../../lib/content'
+
+const posts = await content.postSummaries()
+---
+
+<Layout title="Blog" description="Everything I have written, newest first.">
+  <div class="container listing">
+    <h1 class="page-title">Blog</h1>
+    <TagFilter tags={tagCounts(posts)} total={posts.length} />
+    <PostList posts={posts} byYear showTags />
+  </div>
+</Layout>
+
+<style>
+  .listing {
+    padding-block: 72px 96px;
+  }
+
+  .page-title {
+    margin-bottom: 28px;
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+interface Props {
+  eyebrow: string
+  title: string
+  text: string
+  allPosts?: boolean
+}
+
+const { eyebrow, title, text, allPosts = true } = Astro.props
+---
+
+<div class="container error">
+  <section class="card">
+    <p class="eyebrow">{eyebrow}</p>
+    <h1 class="title">{title}</h1>
+    <p class="text">{text}</p>
+    <p class="links">
+      <a href="/">Home</a>
+      {allPosts && <a href="/blog">All posts</a>}
+    </p>
+  </section>
+</div>
+
+<style>
+  .error {
+    padding-block: 88px 96px;
+  }
+
+  .card {
+    max-width: 560px;
+    padding: 32px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .title {
+    margin: 0 0 14px;
+    font-size: 32px;
+    line-height: 1.15;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+  }
+
+  .text {
+    margin: 0 0 24px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--text-soft);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 20px;
+    margin: 0;
+    font-size: 14px;
+  }
+
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+</style>

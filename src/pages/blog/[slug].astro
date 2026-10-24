@@ -1,0 +1,39 @@
+---
+import type { GetStaticPaths } from 'astro'
+import site from '../../../site.config'
+import PostArticle from '../../components/PostArticle.astro'
+import Layout from '../../layouts/Layout.astro'
+import { content } from '../../lib/content'
+import { siteUrl } from '../../lib/site'
+
+export const getStaticPaths = (async () => {
+  return (await content.allPosts()).map(post => ({ params: { slug: post.slug } }))
+}) satisfies GetStaticPaths
+
+const post = await content.postPage(Astro.params.slug)
+if (!post) return Astro.rewrite('/404')
+
+const url = post.seo.canonicalUrl ?? `${siteUrl}${post.path}`
+---
+
+<Layout
+  title={post.seo.title}
+  description={post.seo.description}
+  canonical={url}
+  image={post.cover}
+  article={{ publishedTime: post.publishedAt, modifiedTime: post.updatedAt, tags: post.tags.map(tag => tag.name) }}
+  jsonLd={{
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    'headline': post.title,
+    'description': post.seo.description ?? undefined,
+    'datePublished': post.publishedAt ?? undefined,
+    'dateModified': post.updatedAt ?? undefined,
+    'url': url,
+    'image': post.cover?.url,
+    'keywords': post.tags.map(tag => tag.name).join(', ') || undefined,
+    'author': { '@type': 'Person', 'name': site.author, 'url': siteUrl },
+  }}
+>
+  <PostArticle post={post} />
+</Layout>

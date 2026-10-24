@@ -1,0 +1,124 @@
+---
+import { isoDay } from '@tamable/blog-kit'
+import type { GetStaticPaths } from 'astro'
+import Layout from '../../layouts/Layout.astro'
+import { content } from '../../lib/content'
+
+export const getStaticPaths = (async () => {
+  return (await content.seriesSummaries()).map(series => ({ params: { slug: series.slug } }))
+}) satisfies GetStaticPaths
+
+const series = await content.seriesDetail(Astro.params.slug)
+if (!series) return Astro.rewrite('/404')
+
+const dates = series.posts.map(post => post.publishedAt).filter((date): date is string => Boolean(date)).sort()
+const first = dates[0]
+const last = dates.length > 1 ? dates[dates.length - 1] : undefined
+---
+
+<Layout title={series.title} description={series.description ?? `${series.posts.length} posts in order.`}>
+  <div class="container listing">
+    <p class="eyebrow"><a href="/series" class="crumb">Series</a></p>
+    <h1 class="page-title">{series.title}</h1>
+    {series.description && <p class="description">{series.description}</p>}
+    <p class="facts">
+      {series.posts.length} {series.posts.length === 1 ? 'part' : 'parts'}
+      {first && ` · started ${isoDay(first)}`}
+      {last && ` · latest ${isoDay(last)}`}
+    </p>
+
+    <ol class="parts">
+      {series.posts.map(post => (
+        <li class="part">
+          <span class="dot" aria-hidden="true" />
+          <p class="when">
+            Part {post.series?.number}
+            {post.publishedAt && ` · ${isoDay(post.publishedAt)}`}
+            {post.readingMinutes && ` · ${post.readingMinutes} min`}
+          </p>
+          <h2 class="title"><a href={post.path}>{post.title}</a></h2>
+          {post.excerpt && <p class="excerpt">{post.excerpt}</p>}
+        </li>
+      ))}
+    </ol>
+  </div>
+</Layout>
+
+<style>
+  .listing {
+    padding-block: 72px 96px;
+  }
+
+  .crumb {
+    color: var(--muted);
+  }
+
+  .description {
+    margin: 0 0 16px;
+    max-width: 640px;
+    font-size: 20px;
+    line-height: 1.55;
+    color: var(--text-soft);
+  }
+
+  .facts {
+    margin: 0 0 48px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .parts {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-left: 1px solid var(--border-strong);
+  }
+
+  .part {
+    position: relative;
+    padding: 0 0 32px 36px;
+  }
+
+  .part:last-child {
+    padding-bottom: 0;
+  }
+
+  .dot {
+    position: absolute;
+    left: -6px;
+    top: 6px;
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: var(--accent-fill);
+  }
+
+  .when {
+    margin: 0 0 6px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  .title {
+    margin: 0 0 6px;
+    font-size: 22px;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+
+  .title a {
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .title a:hover {
+    color: var(--link);
+  }
+
+  .excerpt {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.55;
+    color: var(--text-soft);
+  }
+</style>

@@ -1,0 +1,55 @@
+---
+import type { TagCount } from '../lib/content'
+
+interface Props {
+  tags: TagCount[]
+  total: number
+  current?: string
+}
+
+const { tags, total, current } = Astro.props
+---
+
+<nav aria-label="Tags" class="tag-filter">
+  <a href="/blog" class:list={['chip', { on: !current }]} aria-current={!current ? 'page' : undefined}>All · {total}</a>
+  {tags.map(tag => (
+    <a
+      href={`/tags/${tag.slug}`}
+      class:list={['chip', { on: current === tag.slug }]}
+      aria-current={current === tag.slug ? 'page' : undefined}
+    >
+      {tag.name} · {tag.count}
+    </a>
+  ))}
+</nav>
+
+<style>
+  .tag-filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 0 0 40px;
+    font-size: 13px;
+  }
+
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 36px;
+    padding: 0 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 999px;
+    color: var(--text-soft);
+    text-decoration: none;
+  }
+
+  .chip:hover {
+    color: var(--text);
+  }
+
+  .chip.on {
+    border-color: var(--accent-fill);
+    background: var(--accent-fill);
+    color: var(--on-accent);
+  }
+</style>
