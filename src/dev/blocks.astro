@@ -1,10 +1,9 @@
 ---
 // Every block Tamable can serve, for checking the post styles. Only added by `astro dev`.
-import { readFile } from 'node:fs/promises'
 import { prepareHtml } from '@tamable/blog-kit'
+import fixture from '@tamable/blog-kit/fixtures/posts/hello-world.json'
 import Layout from '../layouts/Layout.astro'
 
-const fixture = JSON.parse(await readFile('node_modules/@tamable/blog-kit/fixtures/posts/hello-world.json', 'utf8')) as { data: { html: string } }
 const html = prepareHtml(`<p>Inline: <strong>bold</strong>, <em>italic</em>, <u>underline</u>, <s>strike</s>, <mark>highlight</mark>, <code>inline code</code>.</p><ul><li><p>One</p></li><li><p>Two</p></li></ul><ol start="3"><li><p>Three</p></li></ol><hr>${fixture.data.html}`)
 ---
 
