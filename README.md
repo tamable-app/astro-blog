@@ -51,7 +51,7 @@ Then, on the same page:
 1. Create a **read key**. It's shown once: put it in `TAMABLE_READ_KEY`.
 2. Copy the deploy webhook's **signing secret** into `TAMABLE_WEBHOOK_SECRET`.
 
-Tamable's [read API guide](https://github.com/tamable-app/tamable/blob/main/docs/read-api.md) covers the API, previews and the webhook in detail.
+Tamable's docs cover the [read API](https://docs.tamable.app/read-api), [preview links](https://docs.tamable.app/preview-links) and the [deploy webhook](https://docs.tamable.app/deploy-webhook) in detail.
 
 ## Environment variables
 
