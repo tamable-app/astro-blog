@@ -1,10 +1,10 @@
-import { sitemapEntries, sitemapXml } from '@tamable/blog-kit'
+import { BLOG_PATH, SERIES_PATH, sitemapEntries, sitemapXml } from '@tamable/blog-kit'
 import type { APIRoute } from 'astro'
 import { content } from '../lib/content'
 import { siteUrl } from '../lib/site'
 
 // The site's own pages; posts, tags and series come from Tamable.
-const PAGES = ['/', '/blog', '/series', '/about']
+const PAGES = ['/', BLOG_PATH, SERIES_PATH, '/about']
 
 export const GET: APIRoute = async () => {
   const entries = sitemapEntries(PAGES, await content.allPosts(), await content.seriesSummaries())

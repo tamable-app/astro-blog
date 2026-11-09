@@ -5,7 +5,7 @@ An [Astro](https://astro.build) starter for a blog whose posts live in a [Tamabl
 It gives you:
 
 - Posts at `/blog/{slug}`, with tags, series, reading time, cover images and the SEO fields you set in Tamable (title, description, canonical URL, Open Graph, JSON-LD)
-- Tag pages at `/tags/{tag}` and series pages at `/series` and `/series/{slug}`
+- Tag pages at `/blog/tags/{tag}` and series pages at `/blog/series` and `/blog/series/{slug}`. Every blog page lives under `/blog`, and the kit's `postPath`, `seriesPath` and `tagPath` build these addresses. A post's slug can never be one of the kit's `RESERVED_SLUGS` (such as `series`, `tags`, `tag`, `feed` or `page`), so a section under `/blog` never collides with a post
 - Draft previews at `/preview/{token}`: never cached, never indexed
 - An RSS feed (`/rss.xml`), a sitemap and `robots.txt`
 - 301 redirects for posts you renamed in Tamable, and optionally for the addresses of an old Ghost blog
@@ -81,7 +81,7 @@ You can point Tamable's deploy webhook straight at your host's build hook instea
 
 Redirects are worked out once, when the site builds, so the live server never asks Tamable about them:
 
-- `integrations/tamable.ts` reads Tamable's posts and renamed posts, turns them into a list of 301s with the kit's `buildRedirects` and hands it to Astro's `redirects` option. With `ghostRedirects: true` in `site.config.ts`, the list also covers an old Ghost blog's post, tag and feed addresses. The same step stops the build when there are no published posts.
+- `integrations/tamable.ts` reads Tamable's posts and renamed posts, turns them into a list of 301s with the kit's `buildRedirects` and hands it to Astro's `redirects` option. The list always sends the old series and tag addresses (`/series`, `/series/{slug}`, `/tags/{tag}`) to their new ones under `/blog`. With `ghostRedirects: true` in `site.config.ts`, it also covers an old Ghost blog's post, tag and feed addresses (Ghost's `/tag/{tag}` goes to `/blog/tags/{tag}`). The same step stops the build when there are no published posts.
 - Every page has one address, without a trailing slash. `server.mjs` first collapses leading slashes (`//blog/` becomes `/blog/`). Prerendered pages are files the Node server serves itself, and with `trailingSlash: 'never'` it answers `/blog/` with a 301 to `/blog`. Every other request goes through `src/fetch.ts` first, which removes the slash before Astro routes it (going straight to a renamed post's new address, in one hop) and, when moving from Ghost, sends old tag and author pages to `/blog` and `/about`.
 - Previews are left alone, since a preview token can end in a slash.
 

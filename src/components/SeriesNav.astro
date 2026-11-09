@@ -1,5 +1,5 @@
 ---
-import type { SeriesNav } from '@tamable/blog-kit'
+import { seriesPath, type SeriesNav } from '@tamable/blog-kit'
 
 interface Props {
   nav: SeriesNav
@@ -10,7 +10,7 @@ const { nav } = Astro.props
 
 <nav aria-label="Series" class="series-nav">
   <p class="where">
-    <a href={`/series/${nav.slug}`}>{nav.title}</a> · part {nav.number} · {nav.total} published
+    <a href={seriesPath(nav.slug)}>{nav.title}</a> · part {nav.number} · {nav.total} published
   </p>
   {(nav.previous || nav.next) && (
     <p class="links">

@@ -1,8 +1,8 @@
 ---
-import { isoDay } from '@tamable/blog-kit'
+import { isoDay, SERIES_PATH } from '@tamable/blog-kit'
 import type { GetStaticPaths } from 'astro'
-import Layout from '../../layouts/Layout.astro'
-import { content } from '../../lib/content'
+import Layout from '../../../layouts/Layout.astro'
+import { content } from '../../../lib/content'
 
 export const getStaticPaths = (async () => {
   return (await content.seriesSummaries()).map(series => ({ params: { slug: series.slug } }))
@@ -18,7 +18,7 @@ const last = dates.length > 1 ? dates[dates.length - 1] : undefined
 
 <Layout title={series.title} description={series.description ?? `${series.posts.length} posts in order.`}>
   <div class="container listing">
-    <p class="eyebrow"><a href="/series" class="crumb">Series</a></p>
+    <p class="eyebrow"><a href={SERIES_PATH} class="crumb">Series</a></p>
     <h1 class="page-title">{series.title}</h1>
     {series.description && <p class="description">{series.description}</p>}
     <p class="facts">

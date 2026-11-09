@@ -1,5 +1,5 @@
 ---
-import { isoDay, monthDay, year, type PostSummary } from '@tamable/blog-kit'
+import { isoDay, monthDay, tagPath, year, type PostSummary } from '@tamable/blog-kit'
 
 interface Props {
   posts: PostSummary[]
@@ -41,7 +41,7 @@ function date(post: PostSummary) {
               {post.excerpt && <p class="excerpt">{post.excerpt}</p>}
               {showTags && post.tags.length > 0 && (
                 <p class="tags">
-                  {post.tags.map(tag => <a href={`/tags/${tag.slug}`}>{tag.name}</a>)}
+                  {post.tags.map(tag => <a href={tagPath(tag.slug)}>{tag.name}</a>)}
                 </p>
               )}
             </div>

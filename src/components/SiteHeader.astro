@@ -1,17 +1,24 @@
 ---
+import { BLOG_PATH, SERIES_PATH } from '@tamable/blog-kit'
 import site from '../../site.config'
 import ThemeToggle from './ThemeToggle.astro'
 
 const path = Astro.url.pathname
 
+// Every blog page lives under /blog, so Blog stays lit on its series and tag pages too. Series is lit
+// on its own pages as well; the most specific link is the page, the other only marks the section.
 const links = [
-  { label: 'Blog', to: '/blog', sections: ['/blog', '/tags'] },
-  { label: 'Series', to: '/series', sections: ['/series'] },
-  { label: 'About', to: '/about', sections: ['/about'] },
+  { label: 'Blog', to: BLOG_PATH },
+  { label: 'Series', to: SERIES_PATH },
+  { label: 'About', to: '/about' },
 ]
 
-function isCurrent(sections: string[]) {
-  return sections.some(section => path === section || path.startsWith(`${section}/`))
+const within = (section: string) => path === section || path.startsWith(`${section}/`)
+const deepest = links.filter(link => within(link.to)).sort((a, b) => b.to.length - a.to.length)[0]
+
+function ariaCurrent(link: (typeof links)[number]) {
+  if (link === deepest) return 'page'
+  return within(link.to) ? 'true' : undefined
 }
 ---
 
@@ -21,8 +28,8 @@ function isCurrent(sections: string[]) {
     {links.map(link => (
       <a
         href={link.to}
-        class:list={['nav-link', { current: isCurrent(link.sections) }]}
-        aria-current={isCurrent(link.sections) ? 'page' : undefined}
+        class:list={['nav-link', { current: within(link.to) }]}
+        aria-current={ariaCurrent(link)}
       >
         {link.label}
       </a>
