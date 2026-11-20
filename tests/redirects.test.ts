@@ -1,5 +1,5 @@
 import type { Server } from 'node:http'
-import { createTamableClient, type TamableClient } from '@tamable/blog-kit'
+import { createTamableClient, SERIES_PATH, seriesPath, tagPath, type TamableClient } from '@tamable/blog-kit'
 import { FAKE_READ_KEY, startFakeTamable } from '@tamable/blog-kit/fake'
 import { afterAll, beforeAll, describe, expect, it } from 'vitest'
 import { earlyRedirect, EmptyBlogError, loadRedirects } from '../src/lib/redirects'
@@ -18,21 +18,38 @@ afterAll(() => new Promise<void>(resolve => server.close(() => resolve())))
 const options = { siteUrl: 'https://example.com', ghost: false, allowEmpty: false }
 
 describe('loadRedirects', () => {
+  // Series and tags moved under /blog; their old addresses keep working.
+  const moved = {
+    '/series': SERIES_PATH,
+    '/series/getting-started': seriesPath('getting-started'),
+    '/tags/work': tagPath('work'),
+    '/tags/writing-tips': tagPath('writing-tips'),
+  }
+
   it('turns posts renamed in Tamable into paths on this site', async () => {
     const { map } = await loadRedirects(client, options)
-    expect(map).toEqual({ '/blog/old-name': '/blog/hello-world' })
+    expect(map).toEqual({ ...moved, '/blog/old-name': '/blog/hello-world' })
+  })
+
+  it('sends the old series and tag addresses under /blog', async () => {
+    const { map } = await loadRedirects(client, options)
+    expect(map).toMatchObject({
+      '/series': '/blog/series',
+      '/series/getting-started': '/blog/series/getting-started',
+      '/tags/work': '/blog/tags/work',
+    })
   })
 
   it('ignores renames on another host', async () => {
     const { map } = await loadRedirects(client, { ...options, siteUrl: 'https://elsewhere.example' })
-    expect(map).toEqual({})
+    expect(map).toEqual(moved)
   })
 
   it('adds Ghost addresses when asked', async () => {
     const { map } = await loadRedirects(client, { ...options, ghost: true })
     expect(map).toMatchObject({
       '/hello-world': '/blog/hello-world',
-      '/tag/work': '/tags/work',
+      '/tag/work': '/blog/tags/work',
       '/rss': '/rss.xml',
       '/blog/old-name': '/blog/hello-world',
     })

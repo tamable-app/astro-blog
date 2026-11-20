@@ -1,5 +1,5 @@
 ---
-import { isoDay, type PostPage } from '@tamable/blog-kit'
+import { isoDay, tagPath, type PostPage } from '@tamable/blog-kit'
 import SeriesNav from './SeriesNav.astro'
 
 interface Props {
@@ -16,7 +16,7 @@ const { post, preview = false } = Astro.props
       ? <time datetime={post.publishedAt}>{isoDay(post.publishedAt)}</time>
       : preview && <span>Not published yet</span>}
     <span> · {post.readingMinutes} min</span>
-    {post.tags.map(tag => <Fragment><span> · </span><a href={`/tags/${tag.slug}`}>{tag.name}</a></Fragment>)}
+    {post.tags.map(tag => <Fragment><span> · </span><a href={tagPath(tag.slug)}>{tag.name}</a></Fragment>)}
   </p>
   <h1 class="title">{post.title}</h1>
   {post.excerpt && <p class="lead">{post.excerpt}</p>}

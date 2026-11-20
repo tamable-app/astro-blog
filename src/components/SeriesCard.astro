@@ -1,5 +1,5 @@
 ---
-import type { SeriesSummary } from '@tamable/blog-kit'
+import { seriesPath, type SeriesSummary } from '@tamable/blog-kit'
 
 interface Props {
   series: SeriesSummary
@@ -8,7 +8,7 @@ interface Props {
 const { series } = Astro.props
 ---
 
-<a href={`/series/${series.slug}`} class="series-card">
+<a href={seriesPath(series.slug)} class="series-card">
   <span class="title">{series.title}</span>
   {series.description && <span class="description">{series.description}</span>}
   <span class="count">{series.postCount} {series.postCount === 1 ? 'part' : 'parts'}</span>
